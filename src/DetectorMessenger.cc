@@ -33,7 +33,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* _detector)
   changeSensitiveMaterial = new G4UIcmdWithAString("/setTarget/material", this);
   changeSensitiveMaterial->SetGuidance("Set sensitive material");
   changeSensitiveMaterial->SetParameterName("SensitiveMaterial",false);
-  changeSensitiveMaterial->SetCandidates("Si SiC");
+  changeSensitiveMaterial->SetCandidates("Si");
   changeSensitiveMaterial->SetDefaultValue("Si");
   changeSensitiveMaterial->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
