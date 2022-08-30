@@ -56,8 +56,8 @@ void DetectorConstruction::DefineMaterials(){
 G4VPhysicalVolume* DetectorConstruction::Construct(){
 
     //World Geometry
-    G4double halfsize_xy = 4*cm;
-    G4double halfsize_z = 2*cm;
+    G4double halfsize_xy = 4*cm/2;
+    G4double halfsize_z = 2*cm/2;
 
     G4Box* solidWorld = new G4Box("BoxWorld", halfsize_xy, halfsize_xy, halfsize_z);
     logicWorld = new G4LogicalVolume(solidWorld, worldMaterial,"logicWorld");
@@ -136,7 +136,7 @@ void DetectorConstruction::SetTargetGeometry(const G4String& value){
 }
 
 void DetectorConstruction::SetSensitiveThickness(G4double value){
-  sensitiveThickness = value;
+  sensitiveThickness = value/2;
   G4cout << "changing sensitive volume thickness" << G4endl;
   G4MTRunManager::GetRunManager()->ReinitializeGeometry();
 }
