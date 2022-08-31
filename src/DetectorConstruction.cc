@@ -46,7 +46,7 @@ void DetectorConstruction::DefineMaterials(){
     metalMaterial->AddMaterial(Silicon, 38.8*perCent);
     metalMaterial->AddMaterial(Oxygen, 44.2*perCent);
 
-    sensitiveMaterial = Air;
+    sensitiveMaterial = Silicon;
     substrateMaterial = Silicon;
 
     // One can add the Silicon Carbide material here using the same logic
