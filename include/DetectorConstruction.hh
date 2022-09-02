@@ -9,7 +9,10 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "DetectorMessenger.hh"
-
+#include "G4EqMagElectricField.hh"
+#include "G4UniformElectricField.hh"
+#include "G4DormandPrince745.hh"
+#include "G4ChordFinder.hh"
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -36,21 +39,21 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         G4VPhysicalVolume* physWorld;
         G4Material* worldMaterial;
 
-        // Metal 
+        // Metal
         G4Box* solidMetal;
         G4LogicalVolume* logicMetal;
         G4VPhysicalVolume* physMetal;
         G4Material* metalMaterial;
         G4double metalThickness;
 
-        // Sensitive voluem 
+        // Sensitive voluem
         G4Box* solidSensitive;
         G4LogicalVolume* logicSensitive;
         G4VPhysicalVolume* physSensitive;
         G4Material* sensitiveMaterial;
         G4double sensitiveThickness;
 
-        //Substrate volume 
+        //Substrate volume
         G4Box* solidSubstrate;
         G4LogicalVolume* logicSubstrate;
         G4VPhysicalVolume* physSubstrate;
@@ -68,5 +71,12 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         //Chip constants
         G4double chip_half_x;
         G4double chip_half_y;
+
+        //field
+        G4ElectricField* pEMfield;
+        G4EqMagElectricField* pEquation;
+        G4ChordFinder* pChordFinder;
+        G4double volts; // in Volts
+        G4double length; // in um
 };
 #endif

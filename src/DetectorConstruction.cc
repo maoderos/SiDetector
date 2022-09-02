@@ -9,12 +9,19 @@
 #include "G4Element.hh"
 #include "G4Box.hh"
 #include "G4UserLimits.hh"
+#include "G4FieldManager.hh"
+#include "G4ElectricField.hh"
+#include "G4MagneticField.hh"
+#include "G4TransportationManager.hh"
+#include "G4IntegrationDriver.hh"
 
+//G4ThreadLocal G4UniformElectricField* DetectorConstruction::fEMfield = 0;
 // Constructor
 DetectorConstruction::DetectorConstruction()
 : G4VUserDetectorConstruction(), logicWorld(0),physWorld(0), worldMaterial(0), solidMetal(0), logicMetal(0), physMetal(0),metalMaterial(0), metalThickness(10.*um/2),
 solidSensitive(0), logicSensitive(0), physSensitive(0), sensitiveMaterial(0), sensitiveThickness(25.*um/2), solidSubstrate(0), logicSubstrate(0),
-physSubstrate(0), substrateMaterial(0), substrateThickness(15.*um/2), Air(0), Silicon(0), Metal(0), targetGeometry("Chip"), chip_half_x(1.5*cm/2), chip_half_y(3.0*cm/2)
+physSubstrate(0), substrateMaterial(0), substrateThickness(15.*um/2), Air(0), Silicon(0), Metal(0), targetGeometry("Chip"), chip_half_x(1.5*cm/2), chip_half_y(3.0*cm/2),
+pEMfield(0), pEquation(0), pChordFinder(0), volts(3.0), length(24)
 {
     detectorMessenger = new DetectorMessenger(this);
     DefineMaterials();
@@ -120,7 +127,43 @@ G4VPhysicalVolume* DetectorConstruction::Construct(){
 
 void DetectorConstruction::ConstructSDandField()
 {
-    G4cout << "Space left to set sensitive detectors and field (electromagnetic)" << G4endl;
+  if (pEMfield) {
+    G4cout << "Existing Electric field found, deleting it" << G4endl;
+    delete pEMfield;
+    delete pEquation;
+    delete pChordFinder;
+  }
+
+  pEMfield = new G4UniformElectricField(G4ThreeVector(0.0,0.0,(volts/length)*volt/um));
+
+
+  // Create an equation of motion for this field
+  pEquation = new G4EqMagElectricField(pEMfield);
+
+  G4int nvar = 8;
+
+  // Create the Runge-Kutta 'stepper' using the efficient 'DoPri5' method
+  auto pStepper = new G4DormandPrince745( pEquation, nvar );
+
+  G4double minStep     = 0.010*um ; // minimal step of 0.010 um
+
+  // The driver will ensure that integration is control to give
+  //   acceptable integration error
+  auto pIntgrationDriver = new G4IntegrationDriver<G4DormandPrince745>(minStep,
+                                                 pStepper,
+                                                 nvar);
+
+  pChordFinder = new G4ChordFinder(pIntgrationDriver);
+
+  // Get the field manager
+  auto fieldManager= new G4FieldManager();
+  fieldManager->SetChordFinder( pChordFinder );
+
+  // Set this field to the global field manager
+  fieldManager->SetDetectorField( pEMfield );
+  logicSensitive->SetFieldManager(fieldManager, true);
+  G4cout << "Electric Field created" << G4endl;
+
 }
 
 void DetectorConstruction::SetTargetGeometry(const G4String& value){
