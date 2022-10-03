@@ -26,6 +26,7 @@ class SensitiveDetector: public G4VSensitiveDetector
     private:
     HitsCollection* hitsCollection;
     int hcid;
+    int eventID;
 
 };
 

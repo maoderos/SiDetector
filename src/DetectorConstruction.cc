@@ -138,13 +138,15 @@ void DetectorConstruction::ConstructSDandField()
     delete pEquation;
     delete pChordFinder;
   }
-
+  
   if (G4SDManager::GetSDMpointer()->FindSensitiveDetector("Detector",0)) delete G4SDManager::GetSDMpointer()->FindSensitiveDetector("Detector");
   G4SDManager* sdMan = G4SDManager::GetSDMpointer();
   SensitiveDetector* sd = new SensitiveDetector("Detector", "DetectorCollection");
   sdMan->AddNewDetector(sd);
   SetSensitiveDetector(logicSensitive,sd);
   cout << "Sensitive Detector created" << endl;
+
+  /*
   pEMfield = new G4UniformElectricField(G4ThreeVector(0.0,0.0,(volts/length)*volt/um));
 
   // Create an equation of motion for this field
@@ -173,7 +175,7 @@ void DetectorConstruction::ConstructSDandField()
   fieldManager->SetDetectorField( pEMfield );
   logicSensitive->SetFieldManager(fieldManager, true);
   cout << "Electric Field created" << endl;
-
+  */
 }
 
 void DetectorConstruction::SetTargetGeometry(const G4String& value){
