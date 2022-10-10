@@ -1,3 +1,4 @@
+#include <iostream>
 #include "DetectorConstruction.hh"
 #include "G4MTRunManager.hh"
 #include "G4NistManager.hh"
@@ -9,11 +10,15 @@
 #include "G4Element.hh"
 #include "G4Box.hh"
 #include "G4UserLimits.hh"
+#include "G4SDManager.hh"
+#include "SensitiveDetector.hh"
 #include "G4FieldManager.hh"
 #include "G4ElectricField.hh"
 #include "G4MagneticField.hh"
 #include "G4TransportationManager.hh"
 #include "G4IntegrationDriver.hh"
+
+using namespace std;
 
 //G4ThreadLocal G4UniformElectricField* DetectorConstruction::fEMfield = 0;
 // Constructor
@@ -133,9 +138,16 @@ void DetectorConstruction::ConstructSDandField()
     delete pEquation;
     delete pChordFinder;
   }
+  
+  if (G4SDManager::GetSDMpointer()->FindSensitiveDetector("Detector",0)) delete G4SDManager::GetSDMpointer()->FindSensitiveDetector("Detector");
+  G4SDManager* sdMan = G4SDManager::GetSDMpointer();
+  SensitiveDetector* sd = new SensitiveDetector("Detector", "DetectorCollection");
+  sdMan->AddNewDetector(sd);
+  SetSensitiveDetector(logicSensitive,sd);
+  cout << "Sensitive Detector created" << endl;
 
+  /*
   pEMfield = new G4UniformElectricField(G4ThreeVector(0.0,0.0,(volts/length)*volt/um));
-
 
   // Create an equation of motion for this field
   pEquation = new G4EqMagElectricField(pEMfield);
@@ -145,7 +157,7 @@ void DetectorConstruction::ConstructSDandField()
   // Create the Runge-Kutta 'stepper' using the efficient 'DoPri5' method
   auto pStepper = new G4DormandPrince745( pEquation, nvar );
 
-  G4double minStep     = 0.010*um ; // minimal step of 0.010 um
+  G4double minStep = 0.010*um ; // minimal step of 0.010 um
 
   // The driver will ensure that integration is control to give
   //   acceptable integration error
@@ -162,8 +174,8 @@ void DetectorConstruction::ConstructSDandField()
   // Set this field to the global field manager
   fieldManager->SetDetectorField( pEMfield );
   logicSensitive->SetFieldManager(fieldManager, true);
-  G4cout << "Electric Field created" << G4endl;
-
+  cout << "Electric Field created" << endl;
+  */
 }
 
 void DetectorConstruction::SetTargetGeometry(const G4String& value){
