@@ -34,6 +34,8 @@ void Run::RecordEvent(const G4Event* evt) {
         energyDeposit += ((*hitsColl)[i]->GetEnergyDeposit());
         //cout << "Edep(RUN) (MeV): " << ((*hitsColl)[i]->GetEnergyDeposit())/MeV << endl;
         squaredEnergyDeposit += ((*hitsColl)[i]->GetEnergyDeposit())*((*hitsColl)[i]->GetEnergyDeposit());
+        electronsInSensitive += ((*hitsColl)[i]->GetNumberOfElectrons());
+        electronsInMetal += ((*hitsColl)[i]->GetNumberOfElectronsInMetal());
         nEvent += ((*hitsColl)[i]->GetNumberOfEvent());
     
     }
@@ -44,6 +46,8 @@ void Run::Merge(const G4Run* aRun){
 
     energyDeposit += localRun->energyDeposit;
     squaredEnergyDeposit += localRun->squaredEnergyDeposit;
+    electronsInSensitive += localRun->electronsInSensitive;
+    electronsInMetal += localRun->electronsInMetal;
     nEvent += localRun->nEvent;
     
     // transfer primary information in local to master

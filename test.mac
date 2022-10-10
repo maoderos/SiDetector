@@ -9,4 +9,6 @@
 # Initialize kernel
 /run/initialize
 #
-/run/beamOn 100
+/gun/energy 2 MeV
+/run/beamOn 1
+

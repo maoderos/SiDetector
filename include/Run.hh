@@ -20,6 +20,8 @@ class Run: public G4Run {
 
     inline G4double GetEDep(){return energyDeposit;};
     inline G4double GetSquaredEDep(){return squaredEnergyDeposit;};
+    inline G4int GetNumberOfElectronsInSensitive() {return electronsInSensitive;};
+    inline G4int GetNumberOfElectronsInMetal(){return electronsInMetal;};
     inline G4int GetNEvent(){return nEvent;};
     inline G4ParticleDefinition* GetPrimaryParticle() { return particle; };
     inline G4double GetKineticEnergy() {return kineticEnergy;};
@@ -27,6 +29,8 @@ class Run: public G4Run {
     private:
     G4double energyDeposit;
     G4double squaredEnergyDeposit;
+    G4int electronsInSensitive;
+    G4int electronsInMetal;
     G4int nEvent;
 
     G4int hid;

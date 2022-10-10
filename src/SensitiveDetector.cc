@@ -50,13 +50,22 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory* history)
           hit->AddEventID();
         }
     }
+    //Get electron when it is generated
+    if (particle == G4Electron::Electron() && step->IsFirstStepInVolume()) {
+      hit->AddNumberOfElectrons();
+    }
+    /* Verbose test
+    if (particle == G4Electron::Electron()){
+      cout << "Electron: " << trackID << endl;
+    }
+    */
     //cout << step->GetPostStepPoint()->GetPhysicalVolume()->GetName() << endl;
     // If electron is entering the metal volume
     if (step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary && 
         step->GetPostStepPoint()->GetPhysicalVolume()->GetName() == "Metal"
         && particle == G4Electron::Electron()) {
             //cout << "Electrons Hit in Metal" << endl;
-            hit->AddNumberOfElectronsinMetal();
+            hit->AddNumberOfElectronsInMetal();
        }
 
     hitsCollection->insert(hit);

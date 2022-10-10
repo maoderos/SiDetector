@@ -18,7 +18,7 @@ class Hits: public G4VHit
 
     inline void AddEnergyDeposit(double e) { energyDeposit += e; }
     inline void AddNumberOfElectrons() {numberOfElectrons += 1;}
-    inline void AddNumberOfElectronsinMetal() {numberOfElectronsInMetal += 1;}
+    inline void AddNumberOfElectronsInMetal() {numberOfElectronsInMetal += 1;}
     inline void AddEventID() { eventID += 1; }
     inline double GetEnergyDeposit() {return energyDeposit;}
     inline int GetNumberOfElectrons() {return numberOfElectrons;}

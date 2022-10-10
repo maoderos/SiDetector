@@ -66,7 +66,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun) {
     // If file does not exist, create file and add header
     if(!filesystem::exists(resultFileName.str().c_str())){
         ofp.open(resultFileName.str().c_str());
-        ofp << "Thickness(um) Edep(MeV) Error(%) KinecticEnergy(MeV)" << G4endl;
+        ofp << "Thickness(um) Edep(MeV) Error(%) KinecticEnergy(MeV) ElectronsInSi ElectronsInMetal" << G4endl;
     } else {
         ofp.open(resultFileName.str().c_str(),ios_base::app);
     }
@@ -77,12 +77,18 @@ void RunAction::EndOfRunAction(const G4Run* aRun) {
     G4double eDep = theRun->GetEDep()/(MeV);
     G4double nEvent = theRun->GetNEvent();
     G4double squaredEdep = theRun->GetSquaredEDep();
+    G4int electronsInSensitive = theRun->GetNumberOfElectronsInSensitive();
+    G4int electronsInMetal = theRun->GetNumberOfElectronsInMetal();
     G4double meanEDep = eDep/nEvent;
+    G4int electronsInSensitivePerEvent = electronsInSensitive/nEvent;
+    G4int electronsInMetalPerEvent = electronsInMetal/nEvent;
     G4double varianceEdep = (squaredEdep/nEvent - (meanEDep*meanEDep)/nEvent)/(nEvent-1);
     G4double primaryEnergy = theRun->GetKineticEnergy()/(MeV);
 
     ofp << detectorConstruction->GetSensitveThickness()/(um) << " " << meanEDep/(MeV) << " " 
-        << sqrt(sqrt(varianceEdep*varianceEdep)) << " " << primaryEnergy << G4endl;
+        << sqrt(sqrt(varianceEdep*varianceEdep)) << " " << primaryEnergy << " " << electronsInSensitivePerEvent << " " << electronsInMetalPerEvent << " " << G4endl;
+
+    ofp.close();
 
 }
 
