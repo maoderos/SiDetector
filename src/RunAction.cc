@@ -80,13 +80,13 @@ void RunAction::EndOfRunAction(const G4Run* aRun) {
     G4int electronsInSensitive = theRun->GetNumberOfElectronsInSensitive();
     G4int electronsInMetal = theRun->GetNumberOfElectronsInMetal();
     G4double meanEDep = eDep/nEvent;
-    G4int electronsInSensitivePerEvent = electronsInSensitive/nEvent;
-    G4int electronsInMetalPerEvent = electronsInMetal/nEvent;
+    //G4double electronsInSensitivePerEvent = electronsInSensitive/nEvent;
+    //G4double electronsInMetalPerEvent = electronsInMetal/nEvent;
     G4double varianceEdep = (squaredEdep/nEvent - (meanEDep*meanEDep)/nEvent)/(nEvent-1);
     G4double primaryEnergy = theRun->GetKineticEnergy()/(MeV);
 
     ofp << detectorConstruction->GetSensitveThickness()/(um) << " " << meanEDep/(MeV) << " " 
-        << sqrt(sqrt(varianceEdep*varianceEdep)) << " " << primaryEnergy << " " << electronsInSensitivePerEvent << " " << electronsInMetalPerEvent << " " << G4endl;
+        << sqrt(sqrt(varianceEdep*varianceEdep)) << " " << primaryEnergy << " " << electronsInSensitive << " " << electronsInMetal << " " << G4endl;
 
     ofp.close();
 

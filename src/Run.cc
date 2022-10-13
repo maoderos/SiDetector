@@ -8,7 +8,7 @@
 using namespace std;
 
 //Run::Run():G4Run(), energyDeposit(0), squaredEnergyDeposit(0), hid(-1), particle(0), kineticEnergy(0), beamAngle(0) {
-Run::Run():G4Run(), energyDeposit(0), squaredEnergyDeposit(0), nEvent(0), hid(-1), particle(0), kineticEnergy(0) {
+Run::Run():G4Run(), energyDeposit(0), squaredEnergyDeposit(0), electronsInSensitive(0), electronsInMetal(0), nEvent(0), hid(-1), particle(0), kineticEnergy(0) {
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     hid = SDman->GetCollectionID("DetectorCollection");
 
