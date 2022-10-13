@@ -83,9 +83,9 @@ done
 echo "/run/initialize" > macro_script.in
 echo "/gun/particle proton" >> macro_script.in
 
-for ((i = $Dmin; i <= $Dmax; i+=$Estep)); do
+for ((i = $Dmin; i <= $Dmax; i+=$Dstep)); do
   echo "/setTarget/sensitiveThickness $i um" >> macro_script.in
-  for ((j = $Emin; j <= $Emax; j+=$Dstep)); do  
+  for ((j = $Emin; j <= $Emax; j+=$Estep)); do  
     echo "/gun/energy $j MeV" >> macro_script.in
     echo "/run/beamOn $Nevent" >> macro_script.in
   done
