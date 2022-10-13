@@ -7,6 +7,7 @@ Dmax=25;
 Estep=1;
 Dstep=1;
 Nevent=100;
+Name=data-renamed;
 
 Help()
 {
@@ -34,6 +35,9 @@ Help()
 		
 		--Nevent <value>
 			Number of events. (default: 100)
+		
+		--Name <value>
+			Name of file. (default: data-renamed)
 	END
 	exit
 }
@@ -73,6 +77,10 @@ while [ $# -gt 0 ]; do
 			Nevent=$2
 			shift 2
 			;;
+		--Name)
+			Name=$2
+			shift 2
+			;;
 	esac
 done 
 	
@@ -94,3 +102,4 @@ done
 #run geant4 simulation
 
 ./SiDetector macro_script.in
+mv result/data.dat result/${Name}.dat
