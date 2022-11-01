@@ -17,6 +17,9 @@
 #include "G4MagneticField.hh"
 #include "G4TransportationManager.hh"
 #include "G4IntegrationDriver.hh"
+#include "G4Region.hh"
+#include "G4ProductionCuts.hh"
+
 
 using namespace std;
 
@@ -125,6 +128,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct(){
     logicSensitive->SetVisAttributes(sensitiveVis);
 
 
+    // Create target region
+    fRegion = new G4Region("Target");
+
+    G4ProductionCuts* cuts = new G4ProductionCuts();
+    G4double defCut = 1*nanometer;
+    cuts->SetProductionCut(defCut, "gamma");
+    cuts->SetProductionCut(defCut, "e-");
+    cuts->SetProductionCut(defCut, "e+");
+    cuts->SetProductionCut(defCut, "proton");
+
+    fRegion->SetProductionCuts(cuts);
+    fRegion->AddRootLogicalVolume(logicSensitive);
+    
 
     return physWorld;
 

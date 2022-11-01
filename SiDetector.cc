@@ -14,6 +14,7 @@
 #include "G4UIExecutive.hh"
 
 #include "Randomize.hh"
+#include "MicroElecSiPhysics.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -45,9 +46,7 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new DetectorConstruction());
 
   // Physics list
-  G4VModularPhysicsList* physicsList = new FTFP_BERT_liv;
-  physicsList->SetVerboseLevel(1);
-  runManager->SetUserInitialization(physicsList);
+  runManager->SetUserInitialization(new MicroElecSiPhysics);
 
     
   // User action initialization
@@ -57,7 +56,6 @@ int main(int argc,char** argv)
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
   time_t systime = time(NULL);
   long seed = (long) systime;
-  // ---- MGP Make it reproducible; to be added: management of seed (write/read seed)
   //long seed = 0;
   G4Random::setTheSeed(seed);
 

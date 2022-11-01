@@ -14,6 +14,8 @@
 #include "G4DormandPrince745.hh"
 #include "G4ChordFinder.hh"
 
+class G4Region;
+
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
     public:
@@ -80,5 +82,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         G4ChordFinder* pChordFinder;
         G4double volts; // in Volts
         G4double length; // in um
+
+        G4Region* fRegion;
 };
 #endif
