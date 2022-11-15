@@ -5,15 +5,16 @@
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4Electron.hh"
+#include "DetectorConstruction.hh"
 
 using namespace std;
 
-SensitiveDetector::SensitiveDetector(const G4String& name, const G4String& hitsCollectionName)
-: G4VSensitiveDetector(name), hitsCollection(0), hcid(-1)
+SensitiveDetector::SensitiveDetector(const G4String& name, const G4String& hitsCollectionName, DetectorConstruction* _det)
+: G4VSensitiveDetector(name), hitsCollection(0), hcid(-1), det(_det)
 {
   collectionName.insert(hitsCollectionName);
+  //  electronHoleCreationEnergy = det->GetElectronHolePairEnergy();
   cout << "Creating Sensitive Detector named: " << name << endl;
-
 
 }
 
@@ -67,6 +68,13 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory* history)
             //cout << "Electrons Hit in Metal" << endl;
             hit->AddNumberOfElectronsInMetal();
        }
+
+    //Count number of electron hole pairs generated per step if energy deposited is higher than cutOff
+    G4double ionizationEnergy = step->GetTotalEnergyDeposit() - step->GetNonIonizingEnergyDeposit();
+    if (energyDep >= ionizationEnergy) {
+      hit->AddNumberOfElectronHolePairs(int(ionizationEnergy/(det->GetElectronHolePairEnergy())));
+    }
+
 
     hitsCollection->insert(hit);
     return true;

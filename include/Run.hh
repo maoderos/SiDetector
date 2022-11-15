@@ -25,12 +25,14 @@ class Run: public G4Run {
     inline G4int GetNEvent(){return nEvent;};
     inline G4ParticleDefinition* GetPrimaryParticle() { return particle; };
     inline G4double GetKineticEnergy() {return kineticEnergy;};
+    inline int GetNumberOfElectronHolePairs() {return electronHolePairs;}
  
     private:
     G4double energyDeposit;
     G4double squaredEnergyDeposit;
     G4int electronsInSensitive;
     G4int electronsInMetal;
+    G4int electronHolePairs;
     G4int nEvent;
 
     G4int hid;

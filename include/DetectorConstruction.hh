@@ -31,6 +31,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         G4bool SetSensitiveMaterial(const G4String& value);
 
         inline G4double GetSensitveThickness() const {return sensitiveThickness;};
+        inline G4double GetElectronHolePairEnergy() const {return electronHolePairEnergy;}
 
 
     private:
@@ -50,7 +51,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         G4Material* metalMaterial;
         G4double metalThickness;
 
-        // Sensitive voluem
+        // Sensitive volume
         G4Box* solidSensitive;
         G4LogicalVolume* logicSensitive;
         G4VPhysicalVolume* physSensitive;
@@ -67,6 +68,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         // Materials
         G4Material* Air;
         G4Material* Silicon;
+        G4double electronHolePairEnergySi;
         G4Material* Metal;
 
         // Messenger parameter
@@ -84,5 +86,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         G4double length; // in um
 
         G4Region* fRegion;
+
+        G4double electronHolePairEnergy;
 };
 #endif

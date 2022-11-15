@@ -64,7 +64,9 @@ void DetectorConstruction::DefineMaterials(){
     sensitiveMaterial = Silicon;
     substrateMaterial = Silicon;
 
-    // One can add the Silicon Carbide material here using the same logic
+    // Electron hole pair energy for materials
+    electronHolePairEnergySi = 3.4 * eV;
+    electronHolePairEnergy = electronHolePairEnergySi;
 
 }
 
@@ -157,7 +159,7 @@ void DetectorConstruction::ConstructSDandField()
   
   if (G4SDManager::GetSDMpointer()->FindSensitiveDetector("Detector",0)) delete G4SDManager::GetSDMpointer()->FindSensitiveDetector("Detector");
   G4SDManager* sdMan = G4SDManager::GetSDMpointer();
-  SensitiveDetector* sd = new SensitiveDetector("Detector", "DetectorCollection");
+  SensitiveDetector* sd = new SensitiveDetector("Detector", "DetectorCollection", this);
   sdMan->AddNewDetector(sd);
   SetSensitiveDetector(logicSensitive,sd);
   cout << "Sensitive Detector created" << endl;
@@ -215,6 +217,7 @@ void DetectorConstruction::SetSensitiveThickness(G4double value){
 G4bool DetectorConstruction::SetSensitiveMaterial(const G4String& value) {
   if (value == "Si") {
     sensitiveMaterial = Silicon;
+    electronHolePairEnergy = electronHolePairEnergySi;
   } // Add SiC here in an else-if
   if (logicSensitive){
     logicSensitive->SetMaterial(sensitiveMaterial);

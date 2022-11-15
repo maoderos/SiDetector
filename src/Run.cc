@@ -8,7 +8,7 @@
 using namespace std;
 
 //Run::Run():G4Run(), energyDeposit(0), squaredEnergyDeposit(0), hid(-1), particle(0), kineticEnergy(0), beamAngle(0) {
-Run::Run():G4Run(), energyDeposit(0), squaredEnergyDeposit(0), electronsInSensitive(0), electronsInMetal(0), nEvent(0), hid(-1), particle(0), kineticEnergy(0) {
+Run::Run():G4Run(), energyDeposit(0), squaredEnergyDeposit(0), electronsInSensitive(0), electronsInMetal(0), electronHolePairs(0), nEvent(0), hid(-1), particle(0), kineticEnergy(0) {
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     hid = SDman->GetCollectionID("DetectorCollection");
 
@@ -36,6 +36,7 @@ void Run::RecordEvent(const G4Event* evt) {
         squaredEnergyDeposit += ((*hitsColl)[i]->GetEnergyDeposit())*((*hitsColl)[i]->GetEnergyDeposit());
         electronsInSensitive += ((*hitsColl)[i]->GetNumberOfElectrons());
         electronsInMetal += ((*hitsColl)[i]->GetNumberOfElectronsInMetal());
+        electronHolePairs += ((*hitsColl)[i]->GetNumberOfElectronHolePairs());
         nEvent += ((*hitsColl)[i]->GetNumberOfEvent());
     
     }
@@ -48,6 +49,7 @@ void Run::Merge(const G4Run* aRun){
     squaredEnergyDeposit += localRun->squaredEnergyDeposit;
     electronsInSensitive += localRun->electronsInSensitive;
     electronsInMetal += localRun->electronsInMetal;
+    electronHolePairs += localRun->electronHolePairs;
     nEvent += localRun->nEvent;
     
     // transfer primary information in local to master

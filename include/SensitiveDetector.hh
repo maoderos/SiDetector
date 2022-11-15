@@ -1,11 +1,10 @@
-
-
 #ifndef SensitiveDetector_h
 #define SensitiveDetector_h 1
 
 #include "G4VSensitiveDetector.hh"
 #include "Hits.hh"
 
+class DetectorConstruction;
 class G4String;
 class G4Step;
 class G4TouchableHistory;
@@ -15,7 +14,7 @@ class SensitiveDetector: public G4VSensitiveDetector
 {
     public:
     //constructor
-    SensitiveDetector(const G4String& SDname, const G4String& hitsCollectionName);
+    SensitiveDetector(const G4String& SDname, const G4String& hitsCollectionName, DetectorConstruction* det);
     //destructor
     ~SensitiveDetector();
 
@@ -27,6 +26,7 @@ class SensitiveDetector: public G4VSensitiveDetector
     HitsCollection* hitsCollection;
     int hcid;
     int eventID;
+    DetectorConstruction* det;
 
 };
 
