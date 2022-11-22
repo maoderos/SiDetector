@@ -123,9 +123,15 @@ void RunAction::BookHisto() {
   analysisManager->SetVerboseLevel(1);
   analysisManager->SetActivation(true);  // enable inactivation of histograms
   G4int nbins = 100;
-  analysisManager->CreateH1("h1","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness() + 2*detectorConstruction->GetSensitiveThickness())/(um));
-
-  G4String fileName = "braggPeak.root";
+  analysisManager->CreateH1("Edep","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness() + 2*detectorConstruction->GetSensitiveThickness())/(um));
+  
+  analysisManager->CreateNtuple("SiDetector", "physics");
+  analysisManager->SetNtupleMerging(true); //So that all is joined in one file
+  analysisManager->CreateNtupleDColumn("flagParticle");
+  analysisManager->CreateNtupleDColumn("flagProcess");
+  analysisManager->FinishNtuple();
+  
+  G4String fileName = "output.root";
   analysisManager->OpenFile(fileName);
   
 }
