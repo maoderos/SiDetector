@@ -12,7 +12,7 @@
 
 using namespace std;
 
-RunAction::RunAction() : G4UserRunAction(), detectorConstruction(0)
+RunAction::RunAction() : G4UserRunAction(), detectorConstruction(0), analysisManager(0)
 {}
 
 RunAction::~RunAction()
@@ -26,9 +26,23 @@ G4Run* RunAction::GenerateRun(){
 }
 
 void RunAction::BeginOfRunAction(const G4Run* aRun) {
+
+  // Get information from DetectorConstruction class
+  detectorConstruction = static_cast<const DetectorConstruction*> (G4MTRunManager::GetRunManager()->GetUserDetectorConstruction());
+
+  if(IsMaster()) {
     cout << "Begin of RunAction" << endl;
     G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
-    //G4MTRunManager::GetRunManager()->SetPrintProgress(static_cast<G4int>(numOfEvent*0.1));
+
+
+    //Create output file for bragg peak
+    ofstream file;
+    file.open("bragg_output.out");
+    file << "Edep(MeV),z(um)" << G4endl;
+    file.close();
+  }
+   if (!analysisManager) { BookHisto(); }  
+  // G4MTRunManager::GetRunManager()->SetPrintProgress(static_cast<G4int>(numOfEvent*0.1));
 
     const PrimaryGeneratorAction* primary =
             dynamic_cast<const PrimaryGeneratorAction*>(G4MTRunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
@@ -36,12 +50,21 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
     if (primary == nullptr) return;
     // add info to Run object
     run->SetPrimaryInformation(primary->GetParticleGun()->GetParticleDefinition(),  primary->GetParticleGun()->GetParticleEnergy());
+    cout << "Finished BeginOfRunAction" << endl;
 }
 
 void RunAction::EndOfRunAction(const G4Run* aRun) {
     cout << "End of RunAction" << endl;
+     if(analysisManager->IsActive()) {
+      analysisManager->Write();
+      analysisManager->CloseFile();
+    }
     if (!IsMaster()) return; // if is not the master run, return 
 
+    //Close bragg peak output file
+    ofstream file;
+    file.open("bragg_output.out", std::ios_base::app);
+    file.close();
     // Create a directory for storing the data 
     stringstream resultFolder;
     resultFolder << "./result/";
@@ -55,8 +78,6 @@ void RunAction::EndOfRunAction(const G4Run* aRun) {
         }
      }
 
-    // Get information from DetectorConstruction class
-    detectorConstruction = static_cast<const DetectorConstruction*> (G4MTRunManager::GetRunManager()->GetUserDetectorConstruction());
     
     ofstream ofp;
     stringstream resultFileName;
@@ -86,11 +107,27 @@ void RunAction::EndOfRunAction(const G4Run* aRun) {
     G4double varianceEdep = (squaredEdep/nEvent - (meanEDep*meanEDep)/nEvent)/(nEvent-1);
     G4double primaryEnergy = theRun->GetKineticEnergy()/(MeV);
 
-    ofp << detectorConstruction->GetSensitveThickness()/(um) << " " << meanEDep/(MeV) << " " 
+    ofp << detectorConstruction->GetSensitiveThickness()/(um) << " " << meanEDep/(MeV) << " " 
         << sqrt(sqrt(varianceEdep*varianceEdep)) << " " << primaryEnergy << " " << electronsInSensitive << " " << electronsInMetal << " " << electronHolePairs << " " << G4endl;
 
     ofp.close();
 
+}
+
+void RunAction::BookHisto() {
+  // Create or get analysis manager
+  // The choice of analysis technology is done via selection of a namespace
+  // in HistoManager.hh
+  analysisManager = G4AnalysisManager::Instance();
+  analysisManager->SetDefaultFileType("root");
+  analysisManager->SetVerboseLevel(1);
+  analysisManager->SetActivation(true);  // enable inactivation of histograms
+  G4int nbins = 100;
+  analysisManager->CreateH1("h1","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness() + 2*detectorConstruction->GetSensitiveThickness())/(um));
+
+  G4String fileName = "braggPeak.root";
+  analysisManager->OpenFile(fileName);
+  
 }
 
 

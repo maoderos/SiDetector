@@ -211,6 +211,7 @@ void DetectorConstruction::SetTargetGeometry(const G4String& value){
 void DetectorConstruction::SetSensitiveThickness(G4double value){
   sensitiveThickness = value/2;
   G4cout << "changing sensitive volume thickness" << G4endl;
+  delete fRegion;
   G4MTRunManager::GetRunManager()->ReinitializeGeometry();
 }
 

@@ -30,7 +30,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         void SetSensitiveThickness(G4double value);
         G4bool SetSensitiveMaterial(const G4String& value);
 
-        inline G4double GetSensitveThickness() const {return sensitiveThickness;};
+        inline G4double GetSensitiveThickness() const {return sensitiveThickness;};
+        inline G4double GetMetalThickness() const {return metalThickness;};
         inline G4double GetElectronHolePairEnergy() const {return electronHolePairEnergy;}
 
 

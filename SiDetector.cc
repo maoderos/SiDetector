@@ -46,8 +46,8 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new DetectorConstruction());
 
   // Physics list
-  runManager->SetUserInitialization(new MicroElecSiPhysics);
-
+  //runManager->SetUserInitialization(new MicroElecSiPhysics);
+  runManager->SetUserInitialization(new FTFP_BERT_liv);
     
   // User action initialization
   runManager->SetUserInitialization(new ActionInitialization());

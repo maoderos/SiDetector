@@ -3,6 +3,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
 #include "RunAction.hh"
+#include "SteppingAction.hh"
 
 
 ActionInitialization::ActionInitialization()
@@ -21,5 +22,6 @@ void ActionInitialization::Build() const
 {
   SetUserAction(new PrimaryGeneratorAction);
   SetUserAction(new RunAction);
+  SetUserAction(new SteppingAction);
 }
 #endif

@@ -79,6 +79,8 @@ echo "/gun/energy $E MeV" >> macro_script.in
 for ((i = $Dmin; i <= $Dmax; i+=$step)); do
   echo "/setTarget/sensitiveThickness $i um" >> macro_script.in
   echo "/run/beamOn $Nevent" >> macro_script.in
+  echo "/control/shell mv bragg_output.out EdepProfile_${j}MeV_${Thick}um.out" >> macro_script.in
+  echo "/control/shell mv braggPeak.root EdepProfile_${j}MeV_${Thick}um.root" >> macro_script.in
 done
 
 
