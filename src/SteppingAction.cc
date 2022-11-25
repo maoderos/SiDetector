@@ -30,18 +30,18 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   if (step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()=="hIoni") flagProcess = 3;
    
   if (eDep <= 0) return;
+
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  // fill ntuple
+  analysisManager->FillNtupleDColumn(0, flagParticle);
+  analysisManager->FillNtupleDColumn(1, flagProcess);
+  analysisManager->AddNtupleRow();  
   //If Particle is inside the sensitive volume
   if (step->GetTrack()->GetVolume()->GetName() == "Sensitive" && step->GetTrack()->GetParentID() == 0) {
     if (step->IsFirstStepInVolume()) return;
-    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
      
     analysisManager->FillH1(0, z/um, eDep/MeV);
 
-    // fill ntuple
-    analysisManager->FillNtupleDColumn(0, flagParticle);
-    analysisManager->FillNtupleDColumn(1, flagProcess);
-    analysisManager->AddNtupleRow();  
-    
     ofstream file;
     file.open("bragg_output.out", std::ios_base::app);
     file << eDep/(MeV) << "," << z/(um) << G4endl;  
