@@ -1,0 +1,6 @@
+/run/initialize
+/setTarget/geometry Material
+#/setTarget/sensitiveMaterial Si
+/setTarget/sensitiveThickness 500 um
+/gun/energy 5 MeV
+/run/beamOn 10000
