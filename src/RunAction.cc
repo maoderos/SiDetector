@@ -13,7 +13,23 @@
 using namespace std;
 
 RunAction::RunAction() : G4UserRunAction(), detectorConstruction(0), analysisManager(0)
-{}
+{
+
+  // Get information from DetectorConstruction class
+  detectorConstruction = static_cast<const DetectorConstruction*> (G4MTRunManager::GetRunManager()->GetUserDetectorConstruction());
+  analysisManager = G4AnalysisManager::Instance();
+  analysisManager->SetDefaultFileType("root");
+  analysisManager->SetVerboseLevel(1);
+  analysisManager->SetActivation(true);  // enable inactivation of histograms
+  G4int nbins = 100;
+  G4double sensitiveThickness = 500*um;
+  analysisManager->CreateH1("Edep","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
+  analysisManager->CreateNtuple("SiDetector", "physics");
+  analysisManager->SetNtupleMerging(true); //So that all is joined in one file
+  analysisManager->CreateNtupleDColumn("flagParticle");
+  analysisManager->CreateNtupleDColumn("flagProcess");
+  analysisManager->FinishNtuple();
+}
 
 RunAction::~RunAction()
 {}
@@ -27,13 +43,10 @@ G4Run* RunAction::GenerateRun(){
 
 void RunAction::BeginOfRunAction(const G4Run* aRun) {
 
-  // Get information from DetectorConstruction class
-  detectorConstruction = static_cast<const DetectorConstruction*> (G4MTRunManager::GetRunManager()->GetUserDetectorConstruction());
 
   if(IsMaster()) {
     cout << "Begin of RunAction" << endl;
     G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
-
 
     //Create output file for bragg peak
     ofstream file;
@@ -41,8 +54,13 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
     file << "Edep(MeV),z(um)" << G4endl;
     file.close();
   }
-   if (!analysisManager) { BookHisto(); }  
+  //BookHisto(aRun);   
   // G4MTRunManager::GetRunManager()->SetPrintProgress(static_cast<G4int>(numOfEvent*0.1));
+  G4int runId = aRun->GetRunID();
+  std::stringstream strRunId;
+  strRunId << runId;
+  G4String fileName =  "output_" + strRunId.str() + ".root"; 
+  analysisManager->OpenFile(fileName);
 
     const PrimaryGeneratorAction* primary =
             dynamic_cast<const PrimaryGeneratorAction*>(G4MTRunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
@@ -55,10 +73,8 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
 
 void RunAction::EndOfRunAction(const G4Run* aRun) {
     cout << "End of RunAction" << endl;
-     if(analysisManager->IsActive()) {
       analysisManager->Write();
       analysisManager->CloseFile();
-    }
     if (!IsMaster()) return; // if is not the master run, return 
 
     //Close bragg peak output file
@@ -114,7 +130,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun) {
 
 }
 
-void RunAction::BookHisto() {
+void RunAction::BookHisto(const G4Run* aRun) {
   // Create or get analysis manager
   // The choice of analysis technology is done via selection of a namespace
   // in HistoManager.hh
@@ -130,8 +146,10 @@ void RunAction::BookHisto() {
   analysisManager->CreateNtupleDColumn("flagParticle");
   analysisManager->CreateNtupleDColumn("flagProcess");
   analysisManager->FinishNtuple();
-  
-  G4String fileName = "output.root";
+  G4int runId = aRun->GetRunID();
+  std::stringstream strRunId;
+  strRunId << runId;
+  G4String fileName =  "output_" + strRunId.str() + ".root"; 
   analysisManager->OpenFile(fileName);
   
 }

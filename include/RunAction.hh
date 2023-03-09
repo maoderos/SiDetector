@@ -20,7 +20,7 @@ class RunAction: public G4UserRunAction
         void EndOfRunAction(const G4Run*);
     
     private:
-        void BookHisto();
+        void BookHisto(const G4Run*);
   
         const DetectorConstruction* detectorConstruction;
         G4AnalysisManager* analysisManager;
