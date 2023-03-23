@@ -23,7 +23,8 @@ RunAction::RunAction() : G4UserRunAction(), detectorConstruction(0), analysisMan
   analysisManager->SetActivation(true);  // enable inactivation of histograms
   G4int nbins = 100;
   G4double sensitiveThickness = 500*um;
-  analysisManager->CreateH1("Edep","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
+  analysisManager->CreateH1("Edep (MeV)","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
+  analysisManager->CreateH1("e-h (fC)","e-h generated in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
   analysisManager->CreateNtuple("SiDetector", "physics");
   analysisManager->SetNtupleMerging(true); //So that all is joined in one file
   analysisManager->CreateNtupleDColumn("flagParticle");

@@ -39,8 +39,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   //If Particle is inside the sensitive volume
   if (step->GetTrack()->GetVolume()->GetName() == "Sensitive" && step->GetTrack()->GetParentID() == 0) {
     if (step->IsFirstStepInVolume()) return;
-     
+    
+    G4double electronHoleEnergy = 3.67*eV; // for Silicon
+    G4double charge = (eDep/eV)*1.6e-4/electronHoleEnergy;
     analysisManager->FillH1(0, z/um, eDep/MeV);
+    analysisManager->FillH1(1, z/um, charge);
 
     ofstream file;
     file.open("bragg_output.out", std::ios_base::app);
