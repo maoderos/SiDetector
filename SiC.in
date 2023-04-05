@@ -1,6 +1,6 @@
 /run/initialize
 /setTarget/geometry Chip
-#/setTarget/sensitiveMaterial Si
+#/setTarget/sensitiveMaterial SiC
 /setTarget/sensitiveThickness 50 um
 /gun/energy 5 MeV
 /run/beamOn 20000

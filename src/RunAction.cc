@@ -22,7 +22,7 @@ RunAction::RunAction() : G4UserRunAction(), detectorConstruction(0), analysisMan
   analysisManager->SetVerboseLevel(1);
   analysisManager->SetActivation(true);  // enable inactivation of histograms
   G4int nbins = 100;
-  G4double sensitiveThickness = 500*um;
+  G4double sensitiveThickness = 50*um;
   analysisManager->CreateH1("Edep (MeV)","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
   analysisManager->CreateH1("e-h (fC)","e-h generated in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
   analysisManager->CreateNtuple("SiDetector", "physics");
