@@ -6,7 +6,7 @@
 #include "G4AnalysisManager.hh"
 
 class DetectorConstruction;
-class Run;
+//class Run;
 
 class RunAction: public G4UserRunAction
 {
@@ -14,7 +14,7 @@ class RunAction: public G4UserRunAction
         RunAction();
         ~RunAction();
 
-        virtual G4Run* GenerateRun();
+  //      virtual G4Run* GenerateRun();
 
         void BeginOfRunAction(const G4Run*);
         void EndOfRunAction(const G4Run*);
@@ -24,7 +24,7 @@ class RunAction: public G4UserRunAction
   
         const DetectorConstruction* detectorConstruction;
         G4AnalysisManager* analysisManager;
-        Run* run;
+//        Run* run;
 }; 
 
 #endif

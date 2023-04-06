@@ -1,5 +1,6 @@
 #include "RunAction.hh"
 #include "Run.hh"
+#include "G4Run.hh"
 #include "G4MTRunManager.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
@@ -23,27 +24,24 @@ RunAction::RunAction() : G4UserRunAction(), detectorConstruction(0), analysisMan
   analysisManager->SetActivation(true);  // enable inactivation of histograms
   G4int nbins = 100;
   G4double sensitiveThickness = 50*um;
-  analysisManager->CreateH1("Edep (MeV)","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
-  analysisManager->CreateH1("e-h (fC)","e-h generated in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
+  analysisManager->CreateH1("Edep (eV/angstrom)","Edep in sensitive volume", nbins,(2*detectorConstruction->GetMetalThickness())/(um),(2*detectorConstruction->GetMetalThickness()/um + sensitiveThickness/(um)));
   analysisManager->CreateNtuple("SiDetector", "physics");
   analysisManager->SetNtupleMerging(true); //So that all is joined in one file
-  analysisManager->CreateNtupleDColumn("flagParticle");
-  analysisManager->CreateNtupleDColumn("flagProcess");
+  analysisManager->CreateNtupleDColumn("LeavingParticleEnergy");
   analysisManager->FinishNtuple();
 }
 
 RunAction::~RunAction()
 {}
-
+/*
 G4Run* RunAction::GenerateRun(){
     cout << "Generating Run" << endl;
     run = new Run();
     cout << "Run generated successfully" << endl;
     return run;
 }
-
+*/
 void RunAction::BeginOfRunAction(const G4Run* aRun) {
-
 
   if(IsMaster()) {
     cout << "Begin of RunAction" << endl;
@@ -68,12 +66,22 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
     
     if (primary == nullptr) return;
     // add info to Run object
-    run->SetPrimaryInformation(primary->GetParticleGun()->GetParticleDefinition(),  primary->GetParticleGun()->GetParticleEnergy());
+//    run->SetPrimaryInformation(primary->GetParticleGun()->GetParticleDefinition(),  primary->GetParticleGun()->GetParticleEnergy());
     cout << "Finished BeginOfRunAction" << endl;
 }
 
 void RunAction::EndOfRunAction(const G4Run* aRun) {
     cout << "End of RunAction" << endl;
+    G4int nbofEvents = aRun->GetNumberOfEvent();
+      //Normalize Histograms
+    //if (nbofEvents == 0) {
+      G4double binWidth = analysisManager->GetH1Width(0);
+      std::cout << nbofEvents << std::endl;
+      std::cout << binWidth << std::endl;
+      G4double fac = 1/(nbofEvents*binWidth);
+      if (IsMaster()) analysisManager->ScaleH1(0, fac);
+
+    //}
       analysisManager->Write();
       analysisManager->CloseFile();
     if (!IsMaster()) return; // if is not the master run, return 

@@ -17,37 +17,24 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
-  G4double flagParticle=0.;
-  G4double flagProcess=0.;
-  G4double eDep = step->GetTotalEnergyDeposit();
+  G4double eDep = step->GetTotalEnergyDeposit()/MeV;
+  //std::cout << eDep/MeV << std::endl;
   G4double z = step->GetPreStepPoint()->GetPosition().z();
-  if (step->GetTrack()->GetDynamicParticle()->GetDefinition() ->GetParticleName() == "e-") flagParticle = 1;    
-  if (step->GetTrack()->GetDynamicParticle()->GetDefinition() ->GetParticleName() == "proton") flagParticle = 2;
-  if (step->GetTrack()->GetDynamicParticle()->GetDefinition() ->GetParticleName() == "GenericIon") flagParticle = 3;
-
-  if (step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()=="msc") flagProcess = 1;
-  if (step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()=="eIoni") flagProcess = 2;
-  if (step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()=="hIoni") flagProcess = 3;
-   
-  if (eDep <= 0) return;
+  G4double particleEnergy = step->GetPostStepPoint()->GetKineticEnergy(); 
+  G4double stepLength = step->GetStepLength();
 
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  // fill ntuple
-  analysisManager->FillNtupleDColumn(0, flagParticle);
-  analysisManager->FillNtupleDColumn(1, flagProcess);
-  analysisManager->AddNtupleRow();  
   //If Particle is inside the sensitive volume
   if (step->GetTrack()->GetVolume()->GetName() == "Sensitive" && step->GetTrack()->GetParentID() == 0) {
-    if (step->IsFirstStepInVolume()) return;
-    
-    G4double electronHoleEnergy = 3.67*eV; // for Silicon
-    G4double charge = (eDep/eV)*1.6e-4/electronHoleEnergy;
-    analysisManager->FillH1(0, z/um, eDep/MeV);
-    analysisManager->FillH1(1, z/um, charge);
+    if (!step->IsFirstStepInVolume()) {
+      analysisManager->FillH1(0, z/um, (eDep/eV)/(stepLength/angstrom));
+    }
+    if(step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
+      analysisManager->FillNtupleDColumn(0, particleEnergy);
+      analysisManager->AddNtupleRow();  
 
-    ofstream file;
-    file.open("bragg_output.out", std::ios_base::app);
-    file << eDep/(MeV) << "," << z/(um) << G4endl;  
+    }
+    
        
   }
 
